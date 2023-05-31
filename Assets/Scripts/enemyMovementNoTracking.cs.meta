@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 22731746b97a618448b72b7db3561cea
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - countText: {instanceID: 0}
+  - winTextObject: {instanceID: 0}
+  - rb: {instanceID: 0}
+  - player: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
