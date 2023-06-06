@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RollaBall.unity
     guid: 9988efc18628b384b86d148e9672230e
+  - enabled: 1
+    path: Assets/Scenes/Plains.unity
+    guid: 707b58ed727c98344a6047651272ca71
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 2959b9adca8c3b14fbe9575e6f096f50,
       type: 2}

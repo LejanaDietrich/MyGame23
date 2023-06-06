@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class PlayerController : MonoBehaviour
     public float winCount = 13;
     public TMP_Text countText;
     public GameObject winTextObject;
+    public AudioManager audioM;
+    public AudioSource audioSource;
+    public MyGameManager gameM;
     public Vector3 jump;
 
     public Rigidbody rb;
@@ -33,12 +37,18 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         playerMat = GetComponent<Renderer>();
+        GameObject gameManagerObject = GameObject.Find("GameManager");
+        gameM = gameManagerObject.GetComponent<MyGameManager>();
+        audioM = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        Debug.Log(audioM.sounds);
         count = 0;
         initialMass = rb.mass;
         SetCountText();
         winTextObject.SetActive(false);
 
         jump = new Vector3(0.0f, 2.0f, 0.0f);
+
+        //audioM.Play("Rolling");
 
         // drag not mass affects falling speed
     }
@@ -55,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
 void SetCountText()
     {
-        countText.text = "Mass: " + rb.mass.ToString() + "  -  Accelleration: " + speed;
+        countText.text = "Mass: " + rb.mass.ToString() + "  -  Speed: " + rb.velocity.magnitude;
         if (count >= winCount)
         {
             winTextObject.SetActive(true);
@@ -66,12 +76,15 @@ void SetCountText()
     // before rendering a frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (isGrounded)
         {
-
-            rb.AddForce(jump * jumpForce, ForceMode.Impulse);
-            isGrounded = false;
+            audioSource.volume = rb.velocity.magnitude/100;
         }
+        else
+        {
+            audioSource.volume = 0;
+        }
+
     }
 
     void OnCollisionStay()
@@ -79,13 +92,26 @@ void SetCountText()
         isGrounded = true;
     }
 
+    // restart wehen under y = -400
+
 
     //just before physics calculations, phys code here
     void FixedUpdate()
     {
+
         Vector3 movement = new Vector3(movementX, movementZ, movementY);
         rb.AddForce(movement * speed);
 
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            rb.AddForce(jump * jumpForce, ForceMode.Impulse);
+            isGrounded = false;
+        }
+
+        if(rb.position.y < -400)
+        {
+            Debug.Log("Dead");
+        }
 
 
         /*
@@ -143,6 +169,11 @@ void SetCountText()
             //rb.gravityScale *= 2;
             SetCountText();
         }
+    }
+
+    public void becomeActive()
+    {
+        this.rb.isKinematic = false;
     }
 
 }
