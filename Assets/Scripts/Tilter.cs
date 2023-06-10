@@ -19,7 +19,7 @@ public class Tilter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameObject.Find("Player").GetComponent<PlayerController>().rb.mass > 100000)
+        if (GameObject.Find("Player").GetComponent<PlayerController>().rb.mass > 1000000)
         {
 
             if (Input.GetAxis("Horizontal") > 0.0)

@@ -11,6 +11,6 @@ public class Rotator : MonoBehaviour
     void Update()
     {
         // Time.deltaTime keeps timing smooth
-        transform.Rotate(new Vector3(30, 60, 90) * Time.deltaTime);
+        transform.Rotate(new Vector3(45, 90, 135) * Time.deltaTime);
     }
 }

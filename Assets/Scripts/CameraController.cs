@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
 
     public float height;
     public float distance;
-    public float turnSpeed = 10;
+    public float turnSpeed = 15;
 
     private Vector3 offsetX;
     private Vector3 offsetY;
@@ -24,7 +24,7 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        offsetX = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * turnSpeed, Vector3.up) * offsetX;
+        offsetX = Quaternion.AngleAxis(Input.GetAxis("Mouse X") * -turnSpeed, Vector3.up) * offsetX;
         offsetY = Quaternion.AngleAxis(Input.GetAxis("Mouse Y") * turnSpeed, Vector3.right) * offsetY;
         transform.position = player.transform.position + offsetX + offsetY;
         transform.LookAt(player.transform.position);
