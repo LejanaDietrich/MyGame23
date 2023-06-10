@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -31,8 +31,8 @@ public class PlayerController : MonoBehaviour
 
     public float MASS_MULT = 2.0f;
     public float SPEED_MULT = 1.8f;
-    public float JUMP_MULT = 1.9f;
-    public float DRAG_DIV = 1.5f;
+    public float JUMP_MULT = 1.92f;
+    public float DRAG_DIV = 1.25f;
     public float EMISSION_MULT = 1.2f;
 
     // springen: so ausprobieren
@@ -47,6 +47,9 @@ public class PlayerController : MonoBehaviour
    return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1);
  }
     */
+    //TODO Spielziel, möglichkeit alles zu sammeln(?), Kakteen umgehbar...., Loch in Mitte als Endziel machbar? You win als texture, leittextur an wege 
+    // make goals and enemies more obvious
+    // enemy - jump in rand dir
 
 // Start is called before the first frame update
 void Start()
@@ -107,11 +110,12 @@ void Start()
 
     void SetCountText()
     {
-        countText.text = "Mass: " + rb.mass.ToString() + "  -  Speed: " + rb.velocity.magnitude;
-        if (count >= winCount)
-        {
-            winTextObject.SetActive(true);
-        }
+        //TODO set this in corners
+        countText.text = "Mass: " + rb.mass.ToString() + "  Speed: " + Math.Round(rb.velocity.magnitude, 2);
+        //if (count >= winCount)
+        //{
+        //    winTextObject.SetActive(true);
+        //}
     }
 
     // Update is called once per frame
@@ -126,7 +130,8 @@ void Start()
         }
         if (isGrounded)
         {
-            audioSource.volume = rb.velocity.magnitude/100;
+            // standard would be /100 but source is quiet
+            audioSource.volume = rb.velocity.magnitude/80;
         }
         else
         {
@@ -151,7 +156,7 @@ void OnCollisionStay(Collision hit)
             isGrounded = true;
         }
     }
-
+    /*
     void OnCollisionEnter(Collision hit)
     {
         if (hit.gameObject.CompareTag("Wall"))
@@ -163,15 +168,16 @@ void OnCollisionStay(Collision hit)
             //isGrounded = true;
         }
     }
-
+    */
+    /*
     private void OnCollisionExit(Collision hit)
     {
         if (!hit.gameObject.CompareTag("Wall"))
         {
         isGrounded = false;
         }
-
     }
+    */
 
     // restart wehen under y = -400
 
@@ -181,6 +187,7 @@ void OnCollisionStay(Collision hit)
     {
 
         MoveRelToCamera();
+        SetCountText();
 
         /*
         float playerVerticalInput = Input.GetAxis("Vertical");
@@ -238,23 +245,30 @@ void OnCollisionStay(Collision hit)
     {
         if (other.gameObject.CompareTag("Pickup"))
         {
+            // TODO abflachende kurven für Feedback!
+            // limited growth functions
+            // N(t+1)=N(t)+k⋅(S−N(t))
+            // is there some way without setting max? see emission
+
+            count += 1;
             other.gameObject.SetActive(false);
             //count += 1;
             rb.mass *= MASS_MULT;
             //rb.mass += initialMass;
             //speed += 1.8f * rb.mass/initialMass * speed;
             speed *= SPEED_MULT;
+            // needs exp? because it starts lower than mass (prob)
             jumpForce *= JUMP_MULT;
             // lower drag more gravity to simulate weight
             rb.drag /= DRAG_DIV; 
             rb.angularDrag /= DRAG_DIV;
             rb.transform.localScale += new Vector3(0.01f, 0.01f, 0.01f);
-            playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * EMISSION_MULT);
-            
+            playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * (EMISSION_MULT + (EMISSION_MULT * 2 / (3*count))));
 
 
+  
             //rb.gravityScale *= 2;
-            SetCountText();
+            //SetCountText();
         }
     }
 
