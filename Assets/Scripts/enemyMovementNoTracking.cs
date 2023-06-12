@@ -26,17 +26,21 @@ public class enemyMovementNoTracking : MonoBehaviour {
     {
         rb = GetComponent<Rigidbody>();
 
-        jump = new Vector3(0.0f, 2.0f, 0.0f);
+        jump = new Vector3(2.0f, 2.0f, 0.0f);
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*
+        Vector3 movement = new Vector3(Random.Range(-15.0f, 15.0f), 0f, Random.Range(-15.0f, 15.0f));
+        rb.AddForce(movement * jumpForce);
+        jump = new Vector3(0, 3.0f, 0);
         if (isGrounded)
         {
             rb.AddForce(jump * jumpForce, ForceMode.Impulse);
             isGrounded = false;
-        }
+        }*/
     }
 
     void OnCollisionStay()
@@ -46,8 +50,15 @@ public class enemyMovementNoTracking : MonoBehaviour {
 
     void FixedUpdate()
     {
-        Vector3 movement = new Vector3(movementX, movementZ, movementY);
-        rb.AddForce(movement * speed);
+        Vector3 movement = new Vector3(Random.Range(-15.0f, 15.0f), 0f, Random.Range(-15.0f, 15.0f));
+        rb.AddForce(movement * jumpForce * 4);
+        jump = new Vector3(0, 3.0f, 0);
+        if (isGrounded)
+        {
+            rb.AddForce(jump * jumpForce, ForceMode.Impulse);
+            isGrounded = false;
+        }
+
     }
 
 

@@ -118,6 +118,11 @@ void Start()
         //}
     }
 
+    void setWinText()
+    {
+        winTextObject.SetActive(true);
+    }
+
     // Update is called once per frame
     // before rendering a frame
     void Update()
@@ -156,30 +161,6 @@ void OnCollisionStay(Collision hit)
             isGrounded = true;
         }
     }
-    /*
-    void OnCollisionEnter(Collision hit)
-    {
-        if (hit.gameObject.CompareTag("Wall"))
-        {
-            //isGrounded = false;
-        }
-        else
-        {
-            //isGrounded = true;
-        }
-    }
-    */
-    /*
-    private void OnCollisionExit(Collision hit)
-    {
-        if (!hit.gameObject.CompareTag("Wall"))
-        {
-        isGrounded = false;
-        }
-    }
-    */
-
-    // restart wehen under y = -400
 
 
     //just before physics calculations, phys code here
@@ -234,9 +215,18 @@ void OnCollisionStay(Collision hit)
         }
         */
 
-        if (rb.position.y < -350)
+        if (rb.position.y < -400)
         {
             Debug.Log("Dead");
+            gameM.EndGame();
+        }
+        if (rb.mass >= 1.31072e+07){
+            setWinText();
+            playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * 10);
+        } else
+        {
+            winTextObject.SetActive(false);
+
         }
     }
 
@@ -269,6 +259,23 @@ void OnCollisionStay(Collision hit)
   
             //rb.gravityScale *= 2;
             //SetCountText();
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Player encountered");
+            Debug.Log(other.gameObject.GetComponent<Rigidbody>().mass);
+            if (other.gameObject.GetComponent<Rigidbody>().mass < 2 * rb.mass)
+            {
+                rb.mass += other.gameObject.GetComponent<Rigidbody>().mass;
+                other.gameObject.SetActive(false);
+            }
+
+            //rb.gravityScale *= 2;
+
         }
     }
 

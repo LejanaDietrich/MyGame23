@@ -34,13 +34,13 @@ public class MyGameManager : MonoBehaviour
 
     public void EndGame()
     {
-        gameEnded = true;
+        //gameEnded = true;
         // Invoke mainly for delays
         Debug.Log("ended");
-        menuUI.SetActive(true);
+        //menuUI.SetActive(true);
         Invoke("Restart", restartDelay);
 
-        menuUI.SetActive(false);
+        //menuUI.SetActive(false);
     }
     
     public void ClickStart()
@@ -56,6 +56,7 @@ public class MyGameManager : MonoBehaviour
     void Restart()
     {
         SceneManager.LoadScene("RollaBall");//(SceneManager.GetActiveScene().name);
+        //winTextObject.SetActive(false);
         UnityEngine.Object.Destroy(gameObject);
     }
 
