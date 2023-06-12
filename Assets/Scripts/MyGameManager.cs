@@ -66,6 +66,7 @@ public class MyGameManager : MonoBehaviour
     {
         //SceneManager.LoadScene("RollaBall");
         SceneManager.LoadScene("Plains", LoadSceneMode.Additive);
+        SceneManager.LoadScene("Descent", LoadSceneMode.Additive);
     }
 
     // Update is called once per frame
