@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/RollaBall.unity
     guid: 9988efc18628b384b86d148e9672230e
   - enabled: 1
+    path: Assets/Scenes/Descent.unity
+    guid: 0ad7e1ca7d64d304baed40d5decb9df8
+  - enabled: 1
     path: Assets/Scenes/Plains.unity
     guid: 707b58ed727c98344a6047651272ca71
   m_configObjects:

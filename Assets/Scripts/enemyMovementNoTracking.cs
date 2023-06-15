@@ -10,6 +10,8 @@ public class enemyMovementNoTracking : MonoBehaviour {
     public float jumpForce = 500f;
     public float mass = 500;
     public float winCount = 13;
+    public Vector3 movement;
+    private int movementCount = 0;
     public TMP_Text countText;
     public GameObject winTextObject;
     public Vector3 jump;
@@ -27,6 +29,8 @@ public class enemyMovementNoTracking : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
 
         jump = new Vector3(2.0f, 2.0f, 0.0f);
+
+        movement = new Vector3(Random.Range(-15.0f, 15.0f), 0f, Random.Range(-15.0f, 15.0f));
     }
 
     // Update is called once per frame
@@ -50,7 +54,12 @@ public class enemyMovementNoTracking : MonoBehaviour {
 
     void FixedUpdate()
     {
-        Vector3 movement = new Vector3(Random.Range(-15.0f, 15.0f), 0f, Random.Range(-15.0f, 15.0f));
+        movementCount += 1;
+        // only change direction every 5 moves
+        if(movementCount % 5 == 0)
+        {
+            Vector3 movement = new Vector3(Random.Range(-15.0f, 15.0f), 0f, Random.Range(-15.0f, 15.0f));
+        }
         rb.AddForce(movement * jumpForce * 4);
         jump = new Vector3(0, 3.0f, 0);
         if (isGrounded)

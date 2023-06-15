@@ -9,7 +9,11 @@ public class PlayerController : MonoBehaviour
 {
     public float speed = 10;
     public float jumpForce = 10f;
-    public float initialMass;
+    //TODO show proper num
+    public double initialMass;
+    //public double pressure = "250 Milliarden bar"; 265 billion bar
+    //public double density = "150 Gramm pro Kubikzentimeter, 150000000 bzw 150 Mio pro Kubikmeter";
+    // neutron star: about 1015 grams / cubic cm
     public float winCount = 13;
     public TMP_Text countText;
     public GameObject winTextObject;
@@ -34,6 +38,7 @@ public class PlayerController : MonoBehaviour
     public float JUMP_MULT = 1.92f;
     public float DRAG_DIV = 1.25f;
     public float EMISSION_MULT = 1.2f;
+    public float WIN_MASS = 15000000;
 
     // springen: so ausprobieren
     /*
@@ -111,7 +116,9 @@ void Start()
     void SetCountText()
     {
         //TODO set this in corners
-        countText.text = "Mass: " + rb.mass.ToString() + "  Speed: " + Math.Round(rb.velocity.magnitude, 2);
+        // density : 1 Kubikmeter/1000000 = 1 Kubikzentimeter
+        // 100 kubikmeter - drone 10x10x10 meter -> 15 000 000kg 4-5 Meters, ca 2.2 für 10 kubikmeter
+        countText.text = "Mass: " + rb.mass.ToString("n0") + "\nSpeed: " + Math.Round(rb.velocity.magnitude, 2) + "\nDensity: " + (rb.mass / 1000000).ToString("n5") + "g/cm³";
         //if (count >= winCount)
         //{
         //    winTextObject.SetActive(true);
@@ -170,56 +177,16 @@ void OnCollisionStay(Collision hit)
         MoveRelToCamera();
         SetCountText();
 
-        /*
-        float playerVerticalInput = Input.GetAxis("Vertical");
-        float playerHorizontalInput = Input.GetAxis("Horizontal");
-
-        // Camera normalized directional vectors
-        Vector3 forward = Camera.main.transform.forward;
-        Vector3 right = Camera.main.transform.right;
-
-        forward.y = 0;
-        right.y = 0;
-        forward = forward.normalized;
-        forward = right.normalized;
-
-        //Direction-relative-input vectors
-        Vector3 forwardRelInput = playerVerticalInput * forward;
-        Vector3 rightRelInput = playerHorizontalInput * right;
-
-        // Camera relative movement
-        Vector3 cameraRelMovement = forwardRelInput + rightRelInput;
-        //this.transform.Translate(cameraRelMovement, Space.World);
-        rb.AddForce(cameraRelMovement);
-        */
-
-
-
-
-        //better 
-        /*
-                 if (Input.GetKey(KeyCode.W))
-        {
-            transform.Translate(Vector3.forward * Time.deltaTime * speed);
-        }
-        if (Input.GetKey(KeyCode.S))
-        { 
-            transform.Translate(-1 * Vector3.forward * Time.deltaTime * speed);
-        }
-        if (Input.GetKey(KeyCode.A)) { 
-            transform.Rotate(0, -1, 0);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.Rotate(0, 1, 0);
-        }
-        */
 
         if (rb.position.y < -400)
         {
             Debug.Log("Dead");
             gameM.EndGame();
         }
+        // 150000000 gramm pro kubikmeter
+        // 13100000 aktuelle masse in gramm?
+        // should be 150000000g or 150000kg bzw *10 wenn drone 10 kubikmeter hat
+        // for some materials: *15Mio Pressure = *15Mio Temp
         if (rb.mass >= 1.31072e+07){
             setWinText();
             playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * 10);
@@ -239,7 +206,7 @@ void OnCollisionStay(Collision hit)
             // limited growth functions
             // N(t+1)=N(t)+k⋅(S−N(t))
             // is there some way without setting max? see emission
-
+            audioM.Play("Collect");
             count += 1;
             other.gameObject.SetActive(false);
             //count += 1;
@@ -270,8 +237,27 @@ void OnCollisionStay(Collision hit)
             Debug.Log(other.gameObject.GetComponent<Rigidbody>().mass);
             if (other.gameObject.GetComponent<Rigidbody>().mass < 2 * rb.mass)
             {
-                rb.mass += other.gameObject.GetComponent<Rigidbody>().mass;
+                audioM.Play("Collect");
+                count += 1;
+                // TODO implement properly
+                //rb.mass += other.gameObject.GetComponent<Rigidbody>().mass;
                 other.gameObject.SetActive(false);
+                audioM.Play("Collect");
+                count += 1;
+                other.gameObject.SetActive(false);
+                //count += 1;
+                rb.mass *= MASS_MULT;
+                //rb.mass += initialMass;
+                //speed += 1.8f * rb.mass/initialMass * speed;
+                speed *= SPEED_MULT;
+                // needs exp? because it starts lower than mass (prob)
+                jumpForce *= JUMP_MULT;
+                // lower drag more gravity to simulate weight
+                rb.drag /= DRAG_DIV;
+                rb.angularDrag /= DRAG_DIV;
+                rb.transform.localScale += new Vector3(0.01f, 0.01f, 0.01f);
+                playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * (EMISSION_MULT + (EMISSION_MULT * 2 / (3 * count))));
+
             }
 
             //rb.gravityScale *= 2;
