@@ -29,6 +29,7 @@ public class SendFlying : MonoBehaviour
             if (other.impulse.magnitude > stability)
             {
                 rb.isKinematic = false;
+                rb.AddForce(other.impulse);
                 //Object.Destroy(gameObject);
             }
 

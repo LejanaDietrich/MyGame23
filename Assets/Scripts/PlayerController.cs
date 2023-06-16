@@ -14,11 +14,12 @@ public class PlayerController : MonoBehaviour
     //public double pressure = "250 Milliarden bar"; 265 billion bar
     //public double density = "150 Gramm pro Kubikzentimeter, 150000000 bzw 150 Mio pro Kubikmeter";
     // neutron star: about 1015 grams / cubic cm
-    public float winCount = 13;
+    private bool hasWon = false;
     public TMP_Text countText;
     public GameObject winTextObject;
     public AudioManager audioM;
     public AudioSource audioSource;
+    public AudioSource collisionAudioSource;
     public MyGameManager gameM;
     public Vector3 jump;
 
@@ -67,8 +68,10 @@ void Start()
         Debug.Log(audioM.sounds);
         count = 0;
         initialMass = rb.mass;
+        hasWon = false;
         SetCountText();
         winTextObject.SetActive(false);
+        audioM.Play("Ambient");
 
         jump = new Vector3(0.0f, 2.0f, 0.0f);
 
@@ -119,15 +122,16 @@ void Start()
         // density : 1 Kubikmeter/1000000 = 1 Kubikzentimeter
         // 100 kubikmeter - drone 10x10x10 meter -> 15 000 000kg 4-5 Meters, ca 2.2 für 10 kubikmeter
         countText.text = "Mass: " + rb.mass.ToString("n0") + "\nSpeed: " + Math.Round(rb.velocity.magnitude, 2) + "\nDensity: " + (rb.mass / 1000000).ToString("n5") + "g/cm³";
-        //if (count >= winCount)
-        //{
-        //    winTextObject.SetActive(true);
-        //}
     }
 
-    void setWinText()
+    void win()
     {
+        hasWon = true;
+        audioM.Play("Win");
+        playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * 30);
         winTextObject.SetActive(true);
+
+        //audioM.Stop("Ambient");
     }
 
     // Update is called once per frame
@@ -140,10 +144,10 @@ void Start()
             rb.AddForce(jump * jumpForce, ForceMode.Impulse);
             isGrounded = false;
         }
-        if (isGrounded)
+        if (this.IsGrounded() && !hasWon)
         {
             // standard would be /100 but source is quiet
-            audioSource.volume = rb.velocity.magnitude/80;
+            audioSource.volume = rb.velocity.magnitude/800 * MathF.Log(rb.mass);
         }
         else
         {
@@ -187,14 +191,7 @@ void OnCollisionStay(Collision hit)
         // 13100000 aktuelle masse in gramm?
         // should be 150000000g or 150000kg bzw *10 wenn drone 10 kubikmeter hat
         // for some materials: *15Mio Pressure = *15Mio Temp
-        if (rb.mass >= 1.31072e+07){
-            setWinText();
-            playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * 10);
-        } else
-        {
-            winTextObject.SetActive(false);
 
-        }
     }
 
 
@@ -206,6 +203,7 @@ void OnCollisionStay(Collision hit)
             // limited growth functions
             // N(t+1)=N(t)+k⋅(S−N(t))
             // is there some way without setting max? see emission
+
             audioM.Play("Collect");
             count += 1;
             other.gameObject.SetActive(false);
@@ -222,8 +220,15 @@ void OnCollisionStay(Collision hit)
             rb.transform.localScale += new Vector3(0.01f, 0.01f, 0.01f);
             playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * (EMISSION_MULT + (EMISSION_MULT * 2 / (3*count))));
 
+            if (rb.mass >= WIN_MASS)
+            {
+                Invoke("win", 0.2f);
+            }
+            else
+            {
+                winTextObject.SetActive(false);
+            }
 
-  
             //rb.gravityScale *= 2;
             //SetCountText();
         }
@@ -259,9 +264,10 @@ void OnCollisionStay(Collision hit)
                 playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * (EMISSION_MULT + (EMISSION_MULT * 2 / (3 * count))));
 
             }
-
-            //rb.gravityScale *= 2;
-
+        } else
+        {
+            collisionAudioSource.volume = other.impulse.magnitude / 1000000;
+            collisionAudioSource.Play();
         }
     }
 
