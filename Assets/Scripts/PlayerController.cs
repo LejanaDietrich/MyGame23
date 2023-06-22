@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
     public float JUMP_MULT = 1.92f;
     public float DRAG_DIV = 1.25f;
     public float EMISSION_MULT = 1.2f;
-    public float WIN_MASS = 15000000;
+    public float WIN_MASS;
 
     // springen: so ausprobieren
     /*
@@ -128,7 +128,7 @@ void Start()
     {
         hasWon = true;
         audioM.Play("Win");
-        playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * 30);
+        playerMat.material.SetColor("_EmissionColor", playerMat.material.GetColor("_EmissionColor") * 50);
         winTextObject.SetActive(true);
 
         //audioM.Stop("Ambient");
@@ -222,6 +222,10 @@ void OnCollisionStay(Collision hit)
 
             if (rb.mass >= WIN_MASS)
             {
+                // TODO check if this should be called multiple times
+                // TODO ensure right weight limit
+                // TODO make better borders for Descent
+                // TODO story risk of rain 2
                 Invoke("win", 0.2f);
             }
             else

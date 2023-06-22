@@ -1075,6 +1075,13 @@ MonoBehaviour:
 
 
 
+
+
+
+
+    Move with WASD and jump with SPACE, use your
+    mouse for controlling the camera
+
     Press R to restart.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1102,8 +1109,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 18
+  m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2510,7 +2517,7 @@ MonoBehaviour:
   - name: Ambient
     clip: {fileID: 8300000, guid: ed97ff3b446d9a546aa37dd89f956076, type: 3}
     volume: 0.191
-    pitch: 0.98
+    pitch: 1.01
     loop: 1
     source: {fileID: 0}
   - name: Thump
@@ -7018,7 +7025,7 @@ PrefabInstance:
     - target: {fileID: 720585744483543482, guid: 71edfb56f7b34b145bfab590639c0fa2,
         type: 3}
       propertyPath: gravityScale
-      value: 1.2
+      value: 1.3
       objectReference: {fileID: 0}
     - target: {fileID: 720585744483543484, guid: 71edfb56f7b34b145bfab590639c0fa2,
         type: 3}
